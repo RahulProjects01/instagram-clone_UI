@@ -13,7 +13,7 @@ import { GoLocation } from 'react-icons/go';
 import { useDispatch } from 'react-redux';
 import { createPostAction } from '../../Redux/Post/Action';
 import { uploadToCloudinary } from '../../Config/UploadToCloudinary';
-import { image } from 'framer-motion/client';
+
 
 const CreatePostModel = ({ isOpen, onClose }) => {
     const [dragOver, setIsDragOver] = useState(false);
@@ -36,8 +36,8 @@ const CreatePostModel = ({ isOpen, onClose }) => {
 
     const handleDrop = (event) => {
         event.preventDefault();
-        const droppedFile = event.dataTransfer.files[0]; // Change file to files
-
+        setIsDragOver(false); // Reset drag state
+        const droppedFile = event.dataTransfer.files[0];
         if (droppedFile.type.startsWith("image/") || droppedFile.type.startsWith("video/")) {
             setFile(droppedFile);
         } else {
@@ -48,35 +48,49 @@ const CreatePostModel = ({ isOpen, onClose }) => {
 
     const handleOnChaange = async (e) => {
         const file = e.target.files[0];
-
         if (file && (file.type.startsWith("image/") || file.type.startsWith("video/"))) {
-            const imgUrl = await uploadToCloudinary(file)
-            setImageUrl(imageUrl);
-            setFile(file);
-            console.log("file: ", file);
-
-        }
-        else {
+            try {
+                const imgUrl = await uploadToCloudinary(file);
+                setImageUrl(imgUrl);
+                setFile(file);
+                console.log("File uploaded successfully:", imgUrl);
+            } catch (error) {
+                console.error("Error uploading file:", error);
+            }
+        } else {
             setFile(null);
-            alert("Please select an image or video")
+            alert("Please select an image or video");
         }
-    }
+    };
+
 
     const handleCaptionChange = (e) => {
         setCaption(e.target.value);
     }
-
     const handleCreatePost = () => {
-        const data = {
-            jwt: token,
-            data: {
-                caption, location, image: imageUrl
-            }
+        const token = localStorage.getItem("token"); // Retrieve token from localStorage
+    
+        if (!token) {
+            console.error("JWT token is missing.");
+            alert("You are not logged in. Please log in to create a post.");
+            return;
         }
-        dispatch(createPostAction(data))
-        onClose()
-    }
-
+    
+        const data = {
+            jwt: token, // Pass the JWT token
+            data: {
+                caption, 
+                location, 
+                image: imageUrl, // Ensure this is the Cloudinary URL
+            }
+        };
+    
+        console.log("Sending data to create post:", data);
+    
+        dispatch(createPostAction(data)); // Pass the data to the action
+        onClose();
+    };
+    
 
 
     return (
