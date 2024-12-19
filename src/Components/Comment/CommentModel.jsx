@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { BsBookmarkFill, BsBookmark, BsEmojiSmile } from 'react-icons/bs';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
@@ -14,8 +14,18 @@ import {
 import { BsThreeDots } from 'react-icons/bs';
 import CommentCard from './CommentCard';
 import "./CommentModel.css"
+import { useDispatch } from 'react-redux';
+import { createCommentAction } from '../../Redux/Comment/Action';
+import { useParams } from 'react-router-dom';
 
 const CommentModel = ({ onClose, isOpen, isPostLiked, isSaved, handleSavedPost, handlepostLike }) => {
+
+    const [commentContent, setCommentContent] = useState();
+    const dispatch = useDispatch();
+    const token = localStorage.getItem("token")
+    const { postId } = useParams();
+
+
     return (
         <div>
             <Modal isOpen={isOpen} onClose={onClose} size='4xl' isCentered>
@@ -74,7 +84,20 @@ const CommentModel = ({ onClose, isOpen, isPostLiked, isSaved, handleSavedPost, 
                                     <div className='p-2'>
                                         <div className='flex w-full items-center'>
                                             <BsEmojiSmile />
-                                            <input className='commentInput border-none' type="text" placeholder='Add a comment...' />
+                                            <input className='commentInput border-none' type="text" onChange={(e) => setCommentContent(e.target.value)}
+                                                onKeyPress={(e) => {
+                                                    if (e.key === "Enter") {
+                                                        const data = {
+                                                            postId,
+                                                            jwt: token,
+                                                            data:{
+                                                                content: commentContent
+                                                            }
+                                                        };
+                                                        dispatch(createCommentAction(data));
+                                                    }
+                                                }}
+                                                placeholder='Add a comment...' />
                                         </div>
                                     </div>
                                 </div>

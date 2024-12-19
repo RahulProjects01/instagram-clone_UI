@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BsBookmark, BsBookmarkFill, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
 import "./PostCard.css";
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
@@ -6,27 +6,66 @@ import { FaRegComment } from 'react-icons/fa';
 import { RiSendPlaneLine } from 'react-icons/ri';
 import CommentModel from '../Comment/CommentModel';
 import { useDisclosure } from '@chakra-ui/react';
+import { useDispatch, useSelector } from 'react-redux';
+import { likePostAction, savePostAction, unLikePostAction, unSavePostAction } from '../../Redux/Post/Action';
+import { isPostLikedByUser, isSavedPost } from '../../Config/Logics';
+import { useNavigate } from 'react-router-dom';
 
 const PostCard = ({ post }) => {
     const [showDropDown, setShowDropDown] = useState(false);
     const [isPostLiked, setIsPostLiked] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const dispatch = useDispatch();
+    const token = localStorage.getItem("token");
+    const { user } = useSelector(store => store);
+    const navigate  = useNavigate();
+    const data = { jwt: token, postId: post?.id }
 
+    console.log("ReqUser --- ", user.reqUser);
+    
     const handleSavedPost = () => {
-        setIsSaved(!isSaved);
+        setIsSaved(true);
+        dispatch(savePostAction(data))
+    }
+
+    const handleUnsavedPost = () => {
+        setIsSaved(false);
+        dispatch(unSavePostAction(data))
     }
 
     const handlepostLike = () => {
-        setIsPostLiked(!isPostLiked);
+        setIsPostLiked(true);
+        dispatch(likePostAction(data))
     }
+
+    const handlepostUnlike = () => {
+        setIsPostLiked(false);
+        dispatch(unLikePostAction(data))
+    }
+
     const handleClick = () => {
         setShowDropDown(!showDropDown)
     }
 
     const handleOpenCommentModel = () => {
+        navigate(`/comment/${post.id}`)
         onOpen();
     }
+
+    useEffect(() => {
+        setIsPostLiked(isPostLikedByUser(post, user.reqUser?.id))
+        setIsSaved(isSavedPost(user.reqUser, post.id))
+    }, [post.likedByUsers, user.reqUser])
+
+
+
+
+
+
+
+
+
     return (
         <div>
             <div className='border rounded-md w-full '>
@@ -49,25 +88,25 @@ const PostCard = ({ post }) => {
                 </div>
 
                 <div className='w-full'>
-                    <img className='w-full' src={post?.image} alt={post.title || 'Post Image'}  />
+                    <img className='w-full' src={post?.image} alt={post.title || 'Post Image'} />
                 </div>
 
                 <div className='flex justify-between items-center w-full px-5 py-4'>
                     <div className='flex items-center space-x-2'>
                         {isPostLiked ? <AiFillHeart className='text-2xl hover:opacity-50 cursor-pointer text-red-600'
-                            onClick={handlepostLike} /> : <AiOutlineHeart className='text-2xl hover:opacity-50 cursor-pointer' onClick={handlepostLike} />}
+                            onClick={handlepostUnlike} /> : <AiOutlineHeart className='text-2xl hover:opacity-50 cursor-pointer' onClick={handlepostLike} />}
                         <FaRegComment onClick={handleOpenCommentModel} className='text-xl hover:opacity-50 cursor-pointer' />
                         <RiSendPlaneLine className='text-xl hover:opacity-50 cursor-pointer' />
                     </div>
 
                     <div>
-                        {isSaved ? (<BsBookmarkFill onClick={handleSavedPost} className='text-xl hover:opacity-50 cursor-pointer' />) : (<BsBookmark onClick={handleSavedPost} className='text-xl hover:opacity-50 cursor-pointer' />)}
+                        {isSaved ? (<BsBookmarkFill onClick={handleUnsavedPost} className='text-xl hover:opacity-50 cursor-pointer' />) : (<BsBookmark onClick={handleSavedPost} className='text-xl hover:opacity-50 cursor-pointer' />)}
                     </div>
                 </div>
 
                 <div className='w-full py-2 px-5 '>
-                    {post?.likesByUsers?.length > 0 && <p>{post?.likesByUsers?.length}</p>}
-                    <p className='opacity-50 py-2 cursor-pointer'>view all 10 comments</p>
+                    {post?.likedByUsers?.length > 0 && <p>{post?.likedByUsers?.length} likes</p>}
+                    {post.comments.length > 0 && <p className='opacity-50 py-2 cursor-pointer'>view all {post?.comments?.length} comments</p>}
                 </div>
 
                 <div className='border '>

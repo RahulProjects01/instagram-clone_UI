@@ -1,30 +1,25 @@
-import { type } from "@testing-library/user-event/dist/type";
-import { CREATE_COMMENT, GET_POST_COMMENT, LIKE_COMMENT, UNLIKE_COMMENT } from "./ReducerType";
+import { CREATE_COMMENT, GET_POST_COMMENT, LIKE_COMMENT, UNLIKE_COMMENT } from "./ActionType";
 
 const BASE_API = "http://localhost:8080/api";
 
-
-
 export const createCommentAction = (data) => async (dispatch) => {
-
     try {
         const res = await fetch(`${BASE_API}/comments/create/${data.postId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + data.jwt
+                Authorization: "Bearer " + data.jwt,
             },
-            body: JSON.stringify(data.data)
+            body: JSON.stringify(data.data),
         });
 
         const comment = await res.json();
         console.log("Created comment ", comment);
-        dispatch({ type: CREATE_COMMENT, payload: comment })
+        dispatch({ type: CREATE_COMMENT, payload: comment });
     } catch (error) {
         console.log("catch Error ", error);
     }
-}
-
+};
 
 
 

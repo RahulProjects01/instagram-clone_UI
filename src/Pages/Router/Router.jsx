@@ -24,6 +24,7 @@ const AppRoutes = () => {
                             <Route path="/" element={<HomePage />} />
                             <Route path="/username" element={<Profile />} />
                             <Route path="/story" element={<Story />} />
+                            <Route path="/comment/:postId" element={<HomePage />} />
                         </Routes>
                     </div>
                 </div>)}
