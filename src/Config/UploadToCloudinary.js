@@ -4,8 +4,8 @@ export const uploadToCloudinary = async (image) => {
     }
 
     const data = new FormData();
-    data.append("file", image); // The file to upload
-    data.append("upload_preset", "Instagram"); // Preset configured in Cloudinary
+    data.append("file", image); 
+    data.append("upload_preset", "Instagram"); 
 
     // Debugging FormData
     for (let [key, value] of data.entries()) {
@@ -25,5 +25,5 @@ export const uploadToCloudinary = async (image) => {
 
     const fileData = await res.json();
     console.log("fileData", fileData);
-    return fileData.secure_url; // Use secure_url for HTTPS links
+    return fileData.secure_url;
 };

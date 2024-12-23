@@ -36,7 +36,7 @@ const CreatePostModel = ({ isOpen, onClose }) => {
 
     const handleDrop = (event) => {
         event.preventDefault();
-        setIsDragOver(false); // Reset drag state
+        setIsDragOver(false);
         const droppedFile = event.dataTransfer.files[0];
         if (droppedFile.type.startsWith("image/") || droppedFile.type.startsWith("video/")) {
             setFile(droppedFile);
@@ -68,29 +68,28 @@ const CreatePostModel = ({ isOpen, onClose }) => {
         setCaption(e.target.value);
     }
     const handleCreatePost = () => {
-        const token = localStorage.getItem("token"); // Retrieve token from localStorage
-    
+        const token = localStorage.getItem("token");
         if (!token) {
             console.error("JWT token is missing.");
             alert("You are not logged in. Please log in to create a post.");
             return;
         }
-    
+
         const data = {
-            jwt: token, // Pass the JWT token
+            jwt: token,
             data: {
-                caption, 
-                location, 
-                image: imageUrl, // Ensure this is the Cloudinary URL
+                caption,
+                location,
+                image: imageUrl,
             }
         };
-    
+
         console.log("Sending data to create post:", data);
-    
-        dispatch(createPostAction(data)); // Pass the data to the action
+
+        dispatch(createPostAction(data));
         onClose();
     };
-    
+
 
 
     return (

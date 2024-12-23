@@ -30,6 +30,6 @@ export const PostReducer = (store = initialvalue, { type, payload }) => {
         case GET_SINGLE_POST:
             return { ...store, singlePost: payload };
         default:
-            return store; // Return the current state if no action matches
+            return store; 
     }
 };

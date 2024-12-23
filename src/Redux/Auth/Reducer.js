@@ -2,7 +2,8 @@ import { SIGN_IN, SIGN_UP } from "./ActionType";
 
 const initialvalue = {
     signup: null,
-    signin: null
+    signin: null,
+     error: null
 };
 
 export const AuthReducer = (store = initialvalue, { type, payload }) => {

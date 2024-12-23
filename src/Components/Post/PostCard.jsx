@@ -19,11 +19,11 @@ const PostCard = ({ post }) => {
     const dispatch = useDispatch();
     const token = localStorage.getItem("token");
     const { user } = useSelector(store => store);
-    const navigate  = useNavigate();
+    const navigate = useNavigate();
     const data = { jwt: token, postId: post?.id }
 
     console.log("ReqUser --- ", user.reqUser);
-    
+
     const handleSavedPost = () => {
         setIsSaved(true);
         dispatch(savePostAction(data))
@@ -59,23 +59,17 @@ const PostCard = ({ post }) => {
     }, [post.likedByUsers, user.reqUser])
 
 
-
-
-
-
-
-
-
     return (
         <div>
             <div className='border rounded-md w-full '>
                 <div className='flex justify-between items-center w-full py-4 px-5'>
                     <div className='flex items-center'>
-                        <img className='h-12 w-12 rounded-full' src="https://cdn.pixabay.com/photo/2020/03/01/21/12/cat-4894153_1280.jpg" alt="" />
+                        <img className='h-12 w-12 rounded-full'
+                            src={post.user.userImage || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"} alt="" />
 
                         <div className='pl-2'>
-                            <p className='font-semibold text-sm '>username</p>
-                            <p className='font-thin text-sm'>location</p>
+                            <p className='font-semibold text-sm '>{post?.user.username}</p>
+                            <p className='font-thin text-sm'>{post?.location}</p>
                         </div>
                     </div>
 

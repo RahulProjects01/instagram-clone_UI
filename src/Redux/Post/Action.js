@@ -12,7 +12,6 @@ import {
 
 const BASE_API = "http://localhost:8080/api";
 
-// Helper function to handle the fetch logic
 const handleFetch = async (url, options, successType, dispatch) => {
   try {
     const response = await fetch(url, options);
@@ -27,7 +26,6 @@ const handleFetch = async (url, options, successType, dispatch) => {
   }
 };
 
-// Helper function to check if JWT is available
 const checkJwt = (data) => {
   if (!data.jwt) {
     console.error("JWT token is missing");
@@ -77,7 +75,6 @@ export const createPostAction = (data) => async (dispatch) => {
 
   const { caption, location, image } = data.data;
 
-  // Construct the query string for the request
   const url = new URL("http://localhost:8080/api/posts/create");
   url.searchParams.append("caption", caption);
   url.searchParams.append("location", location);
@@ -86,7 +83,7 @@ export const createPostAction = (data) => async (dispatch) => {
   const options = {
       method: "POST",
       headers: {
-          "Authorization": `Bearer ${data.jwt}`, // Include the JWT token here
+          "Authorization": `Bearer ${data.jwt}`, 
       },
   };
 

@@ -7,20 +7,20 @@ export const signupAction = (data) => async (dispatch) => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(data), // Ensure this object has all required fields
+            body: JSON.stringify(data), 
         });
 
         if (res.ok) {
             const user = await res.json();
-            console.log("Signup User: ", user); // Log the user data received from the backend
+            console.log("Signup User: ", user);
             dispatch({ type: SIGN_UP, payload: user });
         } else {
-            const error = await res.json(); // Capture the error response body
-            console.log("Signup failed:", error.message); // Log the detailed error message
+            const error = await res.json(); 
+            console.log("Signup failed:", error.message); 
         }
 
     } catch (error) {
-        console.log("Signup error:", error); // Log error in case of failure
+        console.log("Signup error:", error); 
     }
 };
 

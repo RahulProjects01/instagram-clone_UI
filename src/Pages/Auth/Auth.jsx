@@ -1,19 +1,18 @@
-import React from 'react'
-import "./Auth.css";
-import { useLocation} from 'react-router-dom';
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import Singin from '../../Components/Register/Singin';
 import Singup from '../../Components/Register/Singup';
-const Auth = () => {
 
+const Auth = () => {
     const location = useLocation();
+
+ 
 
     return (
         <div>
-            <div>
-                {location.pathname === "/login" ? <Singin /> : <Singup />}
-            </div>
+            {location.pathname === "/login" ? <Singin /> : <Singup />}
         </div>
-    )
-}
+    );
+};
 
-export default Auth
+export default Auth;

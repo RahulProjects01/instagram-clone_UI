@@ -9,14 +9,16 @@ export const isPostLikedByUser = (post, userId) => {
 }
 
 
-export const isCommentLikedByUser = (comment, userId) => {
-    for (let item of comment.likedByUsers) {
+export const isCommentLikedByUser  = (comment, userId) => {
+    const likedByUsers = Array.isArray(comment.likedByUsers) ? comment.likedByUsers : [];
+    for (let item of likedByUsers) {
         if (item.id === userId) {
-            return true;
+            return true; 
         }
     }
-    return false;
-}
+    return false; 
+};
+
 
 
 export const isSavedPost = (user, postId) => {
@@ -43,7 +45,6 @@ export const isFollowing = (reqUser, user2) => {
 
 export const timeDifference = (timestamp) => {
 
-    // show the post time
     const date = new Date(timestamp);
     const diff = Date.now() - date.getTime();
     const seconds = Math.floor(diff / 1000);

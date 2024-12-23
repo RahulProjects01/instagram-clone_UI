@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { BsBookmarkFill, BsBookmark, BsEmojiSmile } from 'react-icons/bs';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
@@ -14,9 +14,11 @@ import {
 import { BsThreeDots } from 'react-icons/bs';
 import CommentCard from './CommentCard';
 import "./CommentModel.css"
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createCommentAction } from '../../Redux/Comment/Action';
 import { useParams } from 'react-router-dom';
+import { findPostByIdAction } from '../../Redux/Post/Action';
+import { timeDifference } from '../../Config/Logics';
 
 const CommentModel = ({ onClose, isOpen, isPostLiked, isSaved, handleSavedPost, handlepostLike }) => {
 
@@ -24,6 +26,18 @@ const CommentModel = ({ onClose, isOpen, isPostLiked, isSaved, handleSavedPost, 
     const dispatch = useDispatch();
     const token = localStorage.getItem("token")
     const { postId } = useParams();
+    const { comment, post, user } = useSelector(store => store);
+
+
+    // console.log("Post", post);
+
+    useEffect(() => {
+        const data = { jwt: token, postId }
+        if (postId) {
+            dispatch(findPostByIdAction(data));
+        }
+    }, [comment.createdComment, postId, comment.likeComment])
+
 
 
     return (
@@ -36,7 +50,7 @@ const CommentModel = ({ onClose, isOpen, isPostLiked, isSaved, handleSavedPost, 
                             <div className="w-[45%] flex flex-col justify-center">
                                 <img
                                     className="max-h-full w-full"
-                                    src="https://cdn.pixabay.com/photo/2023/11/04/07/40/cat-8364405_1280.jpg"
+                                    src={post.singlePost?.image}
                                     alt="Cat"
                                 />
                             </div>
@@ -45,11 +59,12 @@ const CommentModel = ({ onClose, isOpen, isPostLiked, isSaved, handleSavedPost, 
                                 <div className='flex justify-between items-center py-5'>
                                     <div className='flex items-center'>
                                         <div>
-                                            <img className='h-9 w-9 rounded-full' src="https://cdn.pixabay.com/photo/2023/01/30/11/04/cat-7755394_1280.jpg" alt="" />
+                                            <img className='h-9 w-9 rounded-full'
+                                                src={user.reqUser.image || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"} alt="" />
                                         </div>
 
                                         <div className='ml-2'>
-                                            <p>username</p>
+                                            <p>{user.reqUser.username}</p>
                                         </div>
                                     </div>
 
@@ -57,7 +72,7 @@ const CommentModel = ({ onClose, isOpen, isPostLiked, isSaved, handleSavedPost, 
                                 </div>
                                 <hr />
                                 <div className='comment'>
-                                    {[1, 1, 1, 1, 1, 1].map((item) => <CommentCard />)}
+                                    {post.singlePost?.comments?.map((item) => <CommentCard comment={item} />)}
                                 </div>
 
 
@@ -77,24 +92,27 @@ const CommentModel = ({ onClose, isOpen, isPostLiked, isSaved, handleSavedPost, 
                                     </div>
 
                                     <div className='w-full py-2'>
-                                        <p>10 likes</p>
-                                        <p className='opacity-50 text-sm'>1 day ago</p>
+                                        {post.singlePost?.likedByUsers.length > 0 && <p>{post.singlePost?.likedByUsers.length} likes</p>}
+                                        <p className='opacity-50 text-sm'>{timeDifference(post.singlePost?.createdAt)}</p>
                                     </div>
 
                                     <div className='p-2'>
                                         <div className='flex w-full items-center'>
                                             <BsEmojiSmile />
-                                            <input className='commentInput border-none' type="text" onChange={(e) => setCommentContent(e.target.value)}
+                                            <input className='commentInput border-none' type="text"
+                                                onChange={(e) => setCommentContent(e.target.value)}
+                                                value={commentContent}
                                                 onKeyPress={(e) => {
                                                     if (e.key === "Enter") {
                                                         const data = {
                                                             postId,
                                                             jwt: token,
-                                                            data:{
+                                                            data: {
                                                                 content: commentContent
                                                             }
                                                         };
                                                         dispatch(createCommentAction(data));
+                                                        setCommentContent("");
                                                     }
                                                 }}
                                                 placeholder='Add a comment...' />
