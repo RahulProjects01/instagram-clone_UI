@@ -5,6 +5,7 @@ import HomePage from '../HomePage/HomePage';
 import Profile from '../Profile/Profile';
 import Story from '../Story/Story';
 import Auth from '../Auth/Auth';
+import EditAccountDetails from '../../Components/EditAccount/EditAccountDetails';
 
 const AppRoutes = () => {
 
@@ -25,6 +26,7 @@ const AppRoutes = () => {
                             <Route path="/username" element={<Profile />} />
                             <Route path="/story" element={<Story />} />
                             <Route path="/comment/:postId" element={<HomePage />} />
+                            <Route path="/account/edit" element={<EditAccountDetails />} />
                         </Routes>
                     </div>
                 </div>)}

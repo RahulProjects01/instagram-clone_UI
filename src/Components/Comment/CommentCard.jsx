@@ -35,7 +35,8 @@ const CommentCard = ({ comment }) => {
                 <div className='flex items-center'>
                     <div>
                         <img className='h-9 w-9 rounded-full'
-                            src={comment.user.userImage || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"} alt="" />
+                            src={comment.user.userImage || 
+                            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"} alt="" />
                     </div>
 
                     <div className='ml-3'>

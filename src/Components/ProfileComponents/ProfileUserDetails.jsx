@@ -1,18 +1,28 @@
 import React from 'react'
 import { TbCircleDashed } from 'react-icons/tb'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom';
 
 const ProfileUserDetails = () => {
+  const { user } = useSelector(store => store);
+const navigate = useNavigate();
+  console.log("user" ,user.reqUser);
+  
   return (
     <div className='py-10'>
       <div className='flex items-center'>
         <div className='w-[15%]'>
-          <img className='w-32 h-32 rounded-full' src="https://cdn.pixabay.com/photo/2022/06/21/08/57/male-7275452_1280.jpg" alt="" />
+          <img
+            className="w-32 h-32 rounded-full object-cover"
+            src={user.reqUser?.image || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"}
+            alt="User Profile"
+          />
         </div>
 
         <div className='space-y-5'>
           <div className='flex space-x-10'>
-            <p>username</p>
-            <button>Edit profile</button>
+            <p>{user.reqUser?.username}</p>
+            <button onClick={()=>navigate("/account/edit")}>Edit profile</button>
             <TbCircleDashed />
           </div>
 
@@ -35,13 +45,8 @@ const ProfileUserDetails = () => {
           </div>
 
           <div>
-            <p className='font-semibold'>Full Name</p>
-            <p className='font-thin text-sm'>😄BAD BOY🙃
-              😎 It’s Badmash 😎
-              🎉 Wish Me 🍰 1st May🎉
-              😇Respect For Girls😇
-              🍴Foody🍴
-              😎 Crazy Minded 🏆</p>
+            <p className='font-semibold'>{user.reqUser?.fullName}</p>
+            <p className='font-thin text-sm'>{user.reqUser?.bio}</p>
           </div>
         </div>
       </div>
