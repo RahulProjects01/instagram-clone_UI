@@ -30,6 +30,12 @@ export const isSavedPost = (user, postId) => {
     return false;
 }
 
+export const isReqUser= (userId1, userId2) => {
+    if(userId1 && userId2) {
+        return userId1 === userId2;
+    }
+}
+
 export const isFollowing = (reqUser, user2) => {
 
     if (reqUser && user2) {

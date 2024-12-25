@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDisclosure } from '@chakra-ui/react'
 import CreatePostModel from '../../Components/Post/CreatePostModel'
 import SearchComponents from '../SearchComponents/SearchComponents';
+import { useSelector } from 'react-redux';
 
 const Sidebar = () => {
 
@@ -12,12 +13,12 @@ const Sidebar = () => {
     const [activeTab, setActiveTab] = useState("");
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const navigate = useNavigate();
-
+const {user} = useSelector(store=>store);
 
     const handleTabClick = (title) => {
         setActiveTab(title);
         if (title === "Profile") {
-            navigate("/username");
+            navigate(`/${user.reUser?.username}`);
         } else if (title === "Home") {
             navigate("/");
         } else if (title === "Create") {

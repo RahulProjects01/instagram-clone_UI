@@ -1,35 +1,44 @@
-import { CREATE_NEW_POST, DELETE_POST, GET_SINGLE_POST, GET_USER_POST, LIKE_POST, SAVE_POST, UNLIKE_POST, UNSAVE_POST } from "./ActionType";
+import { 
+    CREATE_NEW_POST, 
+    DELETE_POST, 
+    GET_SINGLE_POST, 
+    GET_USER_POST, 
+    LIKE_POST, 
+    SAVE_POST, 
+    UNLIKE_POST, 
+    UNSAVE_POST 
+} from "./ActionType";
 
-const initialvalue = {
+const initialState = {
     createdPost: null,
-    usersPost: [],
-    deletedpost: null,
-    likePost: null,
-    unlikepost: null,
-    savedpost: null,
-    unsavedPost: null,
-    singlePost: null,
+    usersPost: [],         // Keeps an array of user's posts
+    deletedPost: null,     // For the deleted post, handle properly in components
+    likePost: null,        // Keep track of liked posts
+    unlikePost: null,      // For unlike post tracking
+    savedPost: null,       // For saved post tracking
+    unsavedPost: null,     // For unsaved post tracking
+    singlePost: null,      // For the single post data
 };
 
-export const PostReducer = (store = initialvalue, { type, payload }) => {
+export const PostReducer = (state = initialState, { type, payload }) => {
     switch (type) {
         case CREATE_NEW_POST:
-            return { ...store, createdPost: payload };
+            return { ...state, createdPost: payload };
         case GET_USER_POST:
-            return { ...store, usersPost: payload };
+            return { ...state, usersPost: payload };  // Update the posts of the user
         case DELETE_POST:
-            return { ...store, deletedpost: payload };
+            return { ...state, deletedPost: payload }; // Handle deleted post
         case LIKE_POST:
-            return { ...store, likePost: payload };
+            return { ...state, likePost: payload };    // Handle liked post
         case UNLIKE_POST:
-            return { ...store, unlikepost: payload };
+            return { ...state, unlikePost: payload };  // Handle unliked post
         case SAVE_POST:
-            return { ...store, savedpost: payload };
+            return { ...state, savedPost: payload };   // Handle saved post
         case UNSAVE_POST:
-            return { ...store, unsavedPost: payload };
+            return { ...state, unsavedPost: payload }; // Handle unsaved post
         case GET_SINGLE_POST:
-            return { ...store, singlePost: payload };
+            return { ...state, singlePost: payload };  // Handle single post data
         default:
-            return store; 
+            return state;  // Return the current state by default
     }
 };

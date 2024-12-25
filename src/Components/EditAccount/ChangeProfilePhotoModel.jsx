@@ -11,8 +11,13 @@ const ChangeProfilePhotoModel = ({ isOpen, onOpen, onClose, handleProfileImageCh
 
                         <ModalBody>
                             <div className='flex flex-col items-center'>
-                                <label for="profileImage" className='font-bold py-3 text-blue-600 cursor-pointer text-xs w-full'>Upload Photo</label>
+                                <label for="profileImage" className='font-bold py-3 text-blue-600 cursor-pointer text-center text-xs w-full'>Upload Photo</label>
+                                <input type="file" onChange={handleProfileImageChange} id='profileImage' name='profileImage' />
+                                <hr />
 
+                                <p className='font-bold py-3 text-red-600 text-center'>Remove Photo</p>
+                                <hr />
+                                <p className='py-3 text-center' onClick={onClose}>Cancel</p>
                             </div>
                         </ModalBody>
                     </ModalContent>

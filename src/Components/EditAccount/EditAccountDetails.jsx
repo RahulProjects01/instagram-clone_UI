@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { editUserAction, getUserProfileAction } from '../../Redux/User/Action';
 import { useFormik } from 'formik';
-import { image } from 'framer-motion/client';
 import ChangeProfilePhotoModel from './ChangeProfilePhotoModel';
 import { uploadToCloudinary } from '../../Config/UploadToCloudinary';
 
@@ -25,9 +24,6 @@ const EditAccountDetails = () => {
         private: false
     });
 
-    useEffect(() => {
-        dispatch(getUserProfileAction(token));
-    }, [token]);
 
 
     useEffect(() => {
@@ -45,35 +41,73 @@ const EditAccountDetails = () => {
         formik.setValues(newValue);
     }, [user.reqUser]);
 
+    useEffect(() => {
+        dispatch(getUserProfileAction(token));
+    }, [token]);
+
+    useEffect(() => {
+        if (user.reqUser) {
+            console.log("reqUser", user.reqUser);
+            const newValue = { ...initialValues };
+
+            for (let key in newValue) {
+                if (user.reqUser[key]) {
+                    newValue[key] = user.reqUser[key];
+                }
+            }
+
+            console.log("new value", newValue);
+            setInitialValues(newValue);
+        }
+    }, [user.reqUser]);
+
     const formik = useFormik({
-        initialValues: { ...initialValues },
-        onSubmit: (values) => {
-            const data = {
-                jwt: token,
-                data: { image, id: user.reqUser?.id }
+        initialValues: {
+            name: user.reqUser?.name || "",
+            username: user.reqUser?.username || "",
+            email: user.reqUser?.email || "",
+            bio: user.reqUser?.bio || "",
+            mobile: user.reqUser?.mobile || "",
+            gender: user.reqUser?.gender || "",
+            website: user.reqUser?.website || "",
+            private: user.reqUser?.private || false,
+        },
+        enableReinitialize: true,
+        onSubmit: async (values) => {
+            const payload = {
+                ...values,
+                id: user.reqUser?.id,
+                image: imageFile || user.reqUser?.image,
             };
-            dispatch(editUserAction(data)); // my be this function will change
+            dispatch(editUserAction(payload));
+
             toast({
-                title:"Account updated...",
-                status:"success",
-                duration:5000,
-                isClosable:true,
+                title: "Account updated...",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
             });
         },
     });
 
 
+
     async function handleProfileImageChange(event) {
-        const seletedFile = event.target.files[0];
-        const image = await uploadToCloudinary(seletedFile);
+        const selectedFile = event.target.files[0]; 
+        if (!selectedFile) return; 
+
+        const image = await uploadToCloudinary(selectedFile);
         setImageFile(image);
-        const data = {
-            jwt:token,
-            data:{image, id:user.reqUser?.id},
+
+        const payload = {
+            id: user.reqUser?.id,
+            image: image,
         };
-        dispatch(editUserAction(data));
+
+        dispatch(editUserAction(payload));
         onClose();
     }
+
 
     return (
         <div className='border rounded-md p-10 lg:px-40'>

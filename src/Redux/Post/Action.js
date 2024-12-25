@@ -110,7 +110,14 @@ export const findUserPostAction = (data) => async (dispatch) => {
       Authorization: `Bearer ${data.jwt}`,
     },
   };
-  await handleFetch(url, options, GET_USER_POST, dispatch);
+  
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+    dispatch({ type: GET_USER_POST, payload: data });
+  } catch (error) {
+    console.error('Error fetching user posts:', error);
+  }
 };
 
 

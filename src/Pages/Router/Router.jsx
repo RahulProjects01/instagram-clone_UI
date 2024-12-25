@@ -23,7 +23,7 @@ const AppRoutes = () => {
                     <div className='w-full'>
                         <Routes>
                             <Route path="/" element={<HomePage />} />
-                            <Route path="/username" element={<Profile />} />
+                            <Route path="/:username" element={<Profile />} />
                             <Route path="/story" element={<Story />} />
                             <Route path="/comment/:postId" element={<HomePage />} />
                             <Route path="/account/edit" element={<EditAccountDetails />} />

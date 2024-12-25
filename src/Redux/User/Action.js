@@ -2,38 +2,63 @@ import { FOLLOW_USER, GET_USER_BY_IDS, GET_USER_BY_USERNAME, REQ_USER, SEARCH_US
 const BASE_API = "http://localhost:8080/api";
 
 export const getUserProfileAction = (jwt) => async (dispatch) => {
-
     try {
-        const res = await fetch("http://localhost:8080/api/users/req", {
+        if (!jwt) {
+            throw new Error("JWT token is missing!");
+        }
+
+        const res = await fetch(`${BASE_API}/users/req`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + jwt
             }
-        })
-        const reqUser = await res.json()
+        });
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        // Check for empty response
+        const text = await res.text();
+        const reqUser = text ? JSON.parse(text) : {}; // Parse only if content exists
+
         dispatch({ type: REQ_USER, payload: reqUser });
     } catch (error) {
-        console.log("catch: ", error);
-
+        console.error("Error fetching user profile:", error.message);
+        dispatch({ type: 'REQ_USER_ERROR', payload: error.message });
     }
-}
+};
 
 
 export const findUserByUserNameAction = (data) => async (dispatch) => {
-
-    const res = await fetch(`${BASE_API}/users/username/${data.username}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + data.jwt
+    try {
+        const jwt = data.jwt || localStorage.getItem("token"); // Fallback for JWT
+        if (!data.username || !jwt) {
+            throw new Error("Username or JWT token is missing!");
         }
-    });
 
-    const user = await res.json();
-    console.log("find by username: ", user);
-    dispatch({ type: GET_USER_BY_USERNAME, payload: user });
-}
+        const res = await fetch(`${BASE_API}/users/username/${data.username}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + jwt
+            }
+        });
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        // Handle empty response
+        const text = await res.text();
+        const user = text ? JSON.parse(text) : {};
+        dispatch({ type: GET_USER_BY_USERNAME, payload: user });
+    } catch (error) {
+        console.error("Error fetching user by username:", error.message);
+    }
+};
+
 
 
 export const findUserByUserIdsAction = (data) => async (dispatch) => {
@@ -55,19 +80,31 @@ export const findUserByUserIdsAction = (data) => async (dispatch) => {
 
 
 export const followUserAction = (data) => async (dispatch) => {
-
-    const res = await fetch(`${BASE_API}/users/follow/${data.userId}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + data.jwt
+    try {
+        if (!data.userId || !data.jwt) {
+            throw new Error("User ID or JWT token is missing!");
         }
-    });
 
-    const user = await res.json();
-    console.log("follow user: ", user);
-    dispatch({ type: FOLLOW_USER, payload: user });
-}
+        const res = await fetch(`${BASE_API}/users/follow/${data.userId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + data.jwt
+            }
+        });
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        const text = await res.text();
+        const user = text ? JSON.parse(text) : {};
+        dispatch({ type: FOLLOW_USER, payload: user });
+    } catch (error) {
+        console.error("Error following user:", error.message);
+    }
+};
+
 
 
 export const unFollowUserAction = (data) => async (dispatch) => {
@@ -106,24 +143,34 @@ export const searchUserAction = (data) => async (dispatch) => {
 }
 
 
-
-
 export const editUserAction = (data) => async (dispatch) => {
-
     try {
+        const token = localStorage.getItem("token"); // Retrieve token
         const res = await fetch(`${BASE_API}/users/account/edit`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + data.jwt
+                Authorization: "Bearer " + token // Use token directly
             },
-            body: JSON.stringify(data.data)
+            body: JSON.stringify(data) // Send complete data
         });
 
-        const user = await res.json();
-        console.log("Update user: ", user);
+        console.log("Response Status:", res.status);
+        console.log("Response Headers:", res.headers);
+
+        // Handle error responses
+        if (!res.ok) {
+            const errorText = await res.text(); // Read error text
+            throw new Error(`Error ${res.status}: ${errorText}`); // Throw error
+        }
+
+        // Parse JSON only if content exists
+        const user = res.status !== 204 ? await res.json() : {};
+        console.log("Edited user: ", user);
+
         dispatch({ type: UPDATE_USER, payload: user });
+
     } catch (error) {
-        console.log("catch error: ", error);
+        console.log("catch error: ", error.message); // Log error message
     }
-}
+};
