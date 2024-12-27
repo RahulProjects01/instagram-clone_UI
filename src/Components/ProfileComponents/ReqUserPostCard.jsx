@@ -4,10 +4,16 @@ import { FaComment } from 'react-icons/fa';
 import './ReqUserPostCard.css';
 
 const ReqUserPostCard = ({ post }) => {
-    // Ensure post exists before rendering
+    console.log("Post Data: ", post); // Debugging data
+
+    // Handle empty or invalid post
     if (!post) {
         return <div>No Post Data</div>;
     }
+
+    // Prepare image URL with fallback
+    const imageUrl = post.image?.replace(/['"]+/g, '') || 
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png";
 
     return (
         <div className="p-2">
@@ -15,7 +21,7 @@ const ReqUserPostCard = ({ post }) => {
                 {/* Post Image */}
                 <img 
                     className="cursor-pointer w-full h-full object-cover"
-                    src={post.image || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"} 
+                    src={imageUrl} 
                     alt="Post" 
                 />
                 
@@ -26,13 +32,13 @@ const ReqUserPostCard = ({ post }) => {
                         {/* Likes Section */}
                         <div className="flex items-center">
                             <AiFillHeart />
-                            <span className="ml-2">{post.likes || 0}</span>
+                            <span className="ml-2">{post.likes?.length || 0}</span>
                         </div>
 
                         {/* Comments Section */}
                         <div className="flex items-center">
                             <FaComment />
-                            <span className="ml-2">{post.comments || 0}</span>
+                            <span className="ml-2">{post.comments?.length || 0}</span>
                         </div>
                     </div>
                 </div>

@@ -11,20 +11,34 @@ import {
 } from "./ActionType";
 
 const BASE_API = "http://localhost:8080/api";
-
 const handleFetch = async (url, options, successType, dispatch) => {
   try {
     const response = await fetch(url, options);
+    
+    // Check if the response is successful (status 200-299)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+    
+    // Parse the response as JSON
     const data = await response.json();
-    console.log(`${successType} Response: `, data);
+    
+    // Log the response data for debugging
+    console.log(`${successType} Response:`, data);
+    
+    // Dispatch the action with the payload (data)
     dispatch({ type: successType, payload: data });
+    
+    return data; // Optionally return the data for further processing if needed
   } catch (error) {
-    console.error(`${successType} Error: `, error);
+    // Log the error for debugging
+    console.error(`${successType} Error:`, error);
+    
+    // Optionally return the error or an error message to handle it in the calling function
+    return null;
   }
 };
+
 
 const checkJwt = (data) => {
   if (!data.jwt) {
@@ -161,8 +175,9 @@ export const unLikePostAction = (data) => async (dispatch) => {
 };
 
 export const savePostAction = (data) => async (dispatch) => {
-  if (!checkJwt(data)) return;
-  const url = `${BASE_API}/posts/save_post/${data.postId}`;
+  if (!checkJwt(data)) return;  // Ensure the JWT token is valid before proceeding
+
+  const url = `${BASE_API}/posts/savePost/${data.postId}`;
   const options = {
     method: "PUT",
     headers: {
@@ -170,8 +185,29 @@ export const savePostAction = (data) => async (dispatch) => {
       Authorization: `Bearer ${data.jwt}`,
     },
   };
-  await handleFetch(url, options, SAVE_POST, dispatch);
+
+  try {
+    // Call handleFetch and get the response or null if there's an error
+    const response = await handleFetch(url, options, SAVE_POST, dispatch);
+
+    // If response is null or undefined, handle the error
+    if (!response) {
+      console.error('Error: No response from API');
+      return;
+    }
+
+    // Check if the response is successful (status 200)
+    if (response.status === 200) {
+      console.log('Post saved successfully');
+    } else {
+      console.error('Failed to save post', response);
+    }
+  } catch (error) {
+    // Handle any unexpected errors in saving the post
+    console.error('Error in saving post:', error);
+  }
 };
+
 
 export const unSavePostAction = (data) => async (dispatch) => {
   if (!checkJwt(data)) return;

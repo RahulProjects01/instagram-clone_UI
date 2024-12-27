@@ -6,7 +6,7 @@ import {
     LIKE_POST, 
     SAVE_POST, 
     UNLIKE_POST, 
-    UNSAVE_POST 
+    UNSAVE_POST, // Assuming you are dispatching this action to fetch saved posts
 } from "./ActionType";
 
 const initialState = {
@@ -15,7 +15,7 @@ const initialState = {
     deletedPost: null,     // For the deleted post, handle properly in components
     likePost: null,        // Keep track of liked posts
     unlikePost: null,      // For unlike post tracking
-    savedPost: null,       // For saved post tracking
+    savedPosts: [],        // For tracking saved posts as an array
     unsavedPost: null,     // For unsaved post tracking
     singlePost: null,      // For the single post data
 };
@@ -41,11 +41,18 @@ export const PostReducer = (state = initialState, { type, payload }) => {
         case UNLIKE_POST:
             return { ...state, unlikePost: payload };  // Handle unliked post
 
-        case SAVE_POST:
-            return { ...state, savedPost: payload };   // Handle saved post
-
         case UNSAVE_POST:
-            return { ...state, unsavedPost: payload }; // Handle unsaved post
+            // Handle unsave post if needed
+            return { 
+                ...state, 
+                savedPosts: state.savedPosts.filter(post => post.id !== payload.id) 
+            }; // Remove the unsaved post from savedPosts
+
+        case SAVE_POST:
+            return { 
+                ...state, 
+                savedPosts: Array.isArray(payload) ? payload : [] // Ensure saved posts is an array
+            };
 
         case GET_SINGLE_POST:
             return { ...state, singlePost: payload };  // Handle single post data

@@ -30,6 +30,13 @@ const Sidebar = () => {
             setIsSearchVisible(false);
         }
     }
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user"); // Clear user details if stored
+        window.location.href = "/login"; // Replace with your login route
+      };
+      
     return (
         <div className='sticky top-0 h-[100vh] flex'>
             <div className={`flex flex-col justify-between h-full ${activeTab === "Search" ? "px-2" : "px-10"}`}>
@@ -61,8 +68,8 @@ const Sidebar = () => {
 
                 </div>}
                 <div className='flex items-center cursor-pointer pb-10'>
-                    <IoReorderThreeOutline className='text-2xl' />
-                    {activeTab !== "Search" && <p className='ml-5'>More</p>}
+                    <IoReorderThreeOutline className='text-2xl ' />
+                    {activeTab !== "Search" && <p className='ml-5 text-bold ' onClick={handleLogout}>Logout</p>}
                 </div>
             </div>
 

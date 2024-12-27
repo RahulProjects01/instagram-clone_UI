@@ -52,3 +52,24 @@ export const signinAction = (data) => async (dispatch) => {
     }
 };
 
+
+const handleLogout = async () => {
+    try {
+        const response = await fetch('http://localhost:8080/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include', 
+        });
+
+        if (response.ok) {
+            // Remove token from localStorage or cookies
+            localStorage.removeItem('token');
+            alert('Logged out successfully!');
+            window.location.href = '/login'; // Redirect to login page
+        } else {
+            console.error('Logout failed');
+        }
+    } catch (error) {
+        console.error('Error during logout:', error);
+    }
+};
+

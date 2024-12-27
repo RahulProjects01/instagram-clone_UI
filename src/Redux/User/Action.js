@@ -122,11 +122,12 @@ export const unFollowUserAction = (data) => async (dispatch) => {
     dispatch({ type: UNFOLLOW_USER, payload: user });
 }
 
-
 export const searchUserAction = (data) => async (dispatch) => {
-
     try {
-        const res = await fetch(`${BASE_API}/users/search?q=/${data.query}`, {
+        // Remove the leading slash and URL-encode the query
+        const query = encodeURIComponent(data.query.replace(/^\/+/, ''));
+
+        const res = await fetch(`${BASE_API}/users/search?q=${query}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -140,7 +141,8 @@ export const searchUserAction = (data) => async (dispatch) => {
     } catch (error) {
         console.log("catch error: ", error);
     }
-}
+};
+
 
 
 export const editUserAction = (data) => async (dispatch) => {

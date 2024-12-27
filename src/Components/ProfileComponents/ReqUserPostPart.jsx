@@ -14,7 +14,6 @@ const ReqUserPostPart = ({ user }) => {
   const { post } = useSelector(store => store);
   console.log("Redux state posts: ", post.usersPost);
 
-
   const token = localStorage.getItem("token");
 
   const tabs = [
@@ -43,7 +42,7 @@ const ReqUserPostPart = ({ user }) => {
             key={item.tab}
             onClick={() => setActiveTab(item.tab)}
             className={`${activeTab === item.tab ? "border-t border-black" : "opacity-60"} 
-              flex items-center cursor-pointer py-2 text-sm`}
+                flex items-center cursor-pointer py-2 text-sm`}
           >
             <p>{item.icon}</p>
             <p className='ml-1 text-sm'>{item.tab}</p>
@@ -52,16 +51,24 @@ const ReqUserPostPart = ({ user }) => {
       </div>
 
       {/* Posts Section */}
-      <div>
-        <div className='flex flex-wrap'>
-          {activeTab === "Post" && post?.usersPost?.length > 0 ? (
+      <div className='flex flex-wrap'>
+        {activeTab === "Post" ? (
+          Array.isArray(post.usersPost) && post.usersPost.length > 0 ? (
             post.usersPost.map((item) => (
-              <ReqUserPostCard post={item} key={item.id || Math.random()} />
+              <ReqUserPostCard key={item.id} post={item} />
             ))
           ) : (
             <p className="text-center w-full py-4">No Posts Found</p>
-          )}
-        </div>
+          )
+        ) : (
+          Array.isArray(user.savedPost) && user.savedPost.length > 0 ? (
+            user.savedPost.map((item) => (
+              <ReqUserPostCard key={item.id} post={item} />
+            ))
+          ) : (
+            <p className="text-center w-full py-4">No Saved Posts</p>
+          )
+        )}
       </div>
 
     </div>
