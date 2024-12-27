@@ -34,38 +34,6 @@ const checkJwt = (data) => {
   return true;
 };
 
-// export const createPostAction = (data) => async (dispatch) => {
-//   if (!data || !data.jwt || !data.data) {
-//       console.error("Invalid data payload:", data);
-//       return;
-//   }
-
-//   const { caption, location, image } = data.data;
-
-//   const url = "http://localhost:8080/api/posts/create";
-
-//   const postPayload = {
-//       caption,
-//       location,
-//       image,
-//   };
-
-//   const options = {
-//       method: "POST",
-//       headers: {
-//           "Content-Type": "application/json",
-//           "Authorization": `Bearer ${data.jwt}`, // Include the JWT token here
-//       },
-//       body: JSON.stringify(postPayload),
-//   };
-
-//   try {
-//       await handleFetch(url, options, CREATE_NEW_POST, dispatch);
-//   } catch (error) {
-//       console.error("Error creating post:", error);
-//   }
-// };
-
 
 export const createPostAction = (data) => async (dispatch) => {
   if (!data || !data.jwt || !data.data) {
@@ -114,6 +82,7 @@ export const findUserPostAction = (data) => async (dispatch) => {
   try {
     const response = await fetch(url, options);
     const data = await response.json();
+    console.log("getData"+data);
     dispatch({ type: GET_USER_POST, payload: data });
   } catch (error) {
     console.error('Error fetching user posts:', error);
@@ -123,6 +92,7 @@ export const findUserPostAction = (data) => async (dispatch) => {
 
 export const reqUserPostAction = (data) => async (dispatch) => {
   if (!checkJwt(data)) return;
+
   const url = `${BASE_API}/posts/following/${data.userId}`;
   const options = {
     method: "GET",
@@ -131,8 +101,38 @@ export const reqUserPostAction = (data) => async (dispatch) => {
       Authorization: `Bearer ${data.jwt}`,
     },
   };
-  await handleFetch(url, options, REQ_USER_POST, dispatch);
+
+  try {
+    console.log("Fetching posts from URL:", url); // Log the URL being used for fetch
+    const response = await fetch(url, options);
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      console.error("API Error:", response.statusText);
+      return;
+    }
+
+    console.log("API Response Data:", responseData); // Log the response data
+
+    // Check if the response is an array and dispatch
+    if (Array.isArray(responseData)) {
+      dispatch({ type: REQ_USER_POST, payload: responseData });
+    } else {
+      console.error("Invalid response format:", responseData);
+    }
+  } catch (error) {
+    console.error('Error fetching user posts:', error);
+  }
 };
+
+// export const reqUserPostAction = (data) => async (dispatch) => {
+//   const mockData = [
+//     { id: 655, caption: 'hello test 001', image: 'image1.jpg' },
+//     { id: 654, caption: 'dasfgdasf', image: 'image2.jpg' },
+//   ];
+  
+//   dispatch({ type: REQ_USER_POST, payload: mockData });
+// };
 
 export const likePostAction = (data) => async (dispatch) => {
   if (!checkJwt(data)) return;

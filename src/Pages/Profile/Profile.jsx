@@ -13,8 +13,8 @@ const Profile = () => {
   const { user } = useSelector(store => store);
 
   // Corrected logic
-  const isRequser = user.reqUser?.id === user.findByUsername?.id;
-  const isFollowed = isFollowing(user.reqUser, user.findByUsername);
+  const isRequser = user.reqUser?.id === user.findByUserName?.id;
+  const isFollowed = isFollowing(user.reqUser, user.findByUserName);
   console.log(user);
 
   useEffect(() => {
@@ -28,15 +28,15 @@ const Profile = () => {
   return (
     <div className='px-20'>
       <div>
-        <ProfileUserDetails 
-          user={isRequser ? user.reqUser : user.findByUsername} 
-          isFollowing={isFollowed} 
-          isRequser={isRequser} 
+        <ProfileUserDetails
+          user={isRequser ? user.reqUser : user.findByUserName}
+          isFollowing={isFollowed}
+          isRequser={isRequser}
         />
       </div>
 
       <div>
-        <ReqUserPostPart user={isRequser ? user.reqUser : user.findByUsername} />
+        <ReqUserPostPart user={isRequser ? user.reqUser : user.findByUserName} />
       </div>
     </div>
   )

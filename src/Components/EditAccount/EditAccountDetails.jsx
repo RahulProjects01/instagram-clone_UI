@@ -27,7 +27,6 @@ const EditAccountDetails = () => {
 
 
     useEffect(() => {
-        console.log("reqUser", user.reqUser);
         const newValue = {};
 
         for (let item in initialValues) {

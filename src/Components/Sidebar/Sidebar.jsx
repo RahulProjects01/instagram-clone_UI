@@ -13,12 +13,12 @@ const Sidebar = () => {
     const [activeTab, setActiveTab] = useState("");
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const navigate = useNavigate();
-const {user} = useSelector(store=>store);
+    const { user } = useSelector(store => store);
 
     const handleTabClick = (title) => {
         setActiveTab(title);
         if (title === "Profile") {
-            navigate(`/${user.reUser?.username}`);
+            navigate(`/${user.reqUser?.username}`);
         } else if (title === "Home") {
             navigate("/");
         } else if (title === "Create") {

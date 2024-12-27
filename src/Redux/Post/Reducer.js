@@ -24,20 +24,32 @@ export const PostReducer = (state = initialState, { type, payload }) => {
     switch (type) {
         case CREATE_NEW_POST:
             return { ...state, createdPost: payload };
+
         case GET_USER_POST:
-            return { ...state, usersPost: payload };  // Update the posts of the user
+            console.log("Received payload in reducer:", payload); // Logs the payload for debugging
+            return { 
+                ...state, 
+                usersPost: Array.isArray(payload) ? payload : [] // Ensures payload is an array
+            };
+
         case DELETE_POST:
             return { ...state, deletedPost: payload }; // Handle deleted post
+
         case LIKE_POST:
             return { ...state, likePost: payload };    // Handle liked post
+
         case UNLIKE_POST:
             return { ...state, unlikePost: payload };  // Handle unliked post
+
         case SAVE_POST:
             return { ...state, savedPost: payload };   // Handle saved post
+
         case UNSAVE_POST:
             return { ...state, unsavedPost: payload }; // Handle unsaved post
+
         case GET_SINGLE_POST:
             return { ...state, singlePost: payload };  // Handle single post data
+
         default:
             return state;  // Return the current state by default
     }

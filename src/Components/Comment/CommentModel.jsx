@@ -29,6 +29,7 @@ const CommentModel = ({ onClose, isOpen, isPostLiked, isSaved, handleSavedPost, 
     const { comment, post, user } = useSelector(store => store);
 
 
+
     // console.log("Post", post);
 
     useEffect(() => {

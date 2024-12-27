@@ -7,9 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { reqUserPostAction } from '../../Redux/Post/Action';
 
 const ReqUserPostPart = ({ user }) => {
-  const [activeTab, setActiveTab] = useState("post");
+  const [activeTab, setActiveTab] = useState("Post");
   const dispatch = useDispatch();
-  const { post } = useSelector((store) => store.post); // Ensure correct state reference
+
+  // Updated selector for Redux state
+  const { post } = useSelector(store => store);
+  console.log("Redux state posts: ", post.usersPost);
+
+
   const token = localStorage.getItem("token");
 
   const tabs = [
@@ -20,14 +25,18 @@ const ReqUserPostPart = ({ user }) => {
   ];
 
   useEffect(() => {
-    if (user) {
-      const data = { jwt: token, userId: user?.id }; // Use user ID and token to fetch posts
-      dispatch(reqUserPostAction(data)); // Trigger post fetching action
+    if (user && token) {
+      const data = { jwt: token, userId: user.id };
+      dispatch(reqUserPostAction(data));
+      console.log("Fetching User Posts with ID:", user.id);
+    } else {
+      console.log("User or token is missing");
     }
   }, [dispatch, user, token]);
 
   return (
     <div>
+      {/* Tabs Section */}
       <div className='flex space-x-14 border-t relative'>
         {tabs.map((item) => (
           <div
@@ -42,15 +51,19 @@ const ReqUserPostPart = ({ user }) => {
         ))}
       </div>
 
+      {/* Posts Section */}
       <div>
         <div className='flex flex-wrap'>
-          {activeTab === "Post" ? (
-            post?.profilePost?.map((item) => <ReqUserPostCard post={item} key={item.id} />) // Ensure `key` prop is provided
+          {activeTab === "Post" && post?.usersPost?.length > 0 ? (
+            post.usersPost.map((item) => (
+              <ReqUserPostCard post={item} key={item.id || Math.random()} />
+            ))
           ) : (
-            user?.savedPost?.map((item) => <ReqUserPostCard post={item} key={item.id} />) // Handle other tabs if needed
+            <p className="text-center w-full py-4">No Posts Found</p>
           )}
         </div>
       </div>
+
     </div>
   );
 }

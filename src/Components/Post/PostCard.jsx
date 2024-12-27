@@ -22,7 +22,7 @@ const PostCard = ({ post }) => {
     const navigate = useNavigate();
     const data = { jwt: token, postId: post?.id }
 
-    console.log("ReqUser --- ", user.reqUser);
+    // console.log("ReqUser --- ", user.reqUser);
 
     const handleSavedPost = () => {
         setIsSaved(true);
